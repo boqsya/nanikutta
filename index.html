@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+
+  <title>なにっ食った</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="なにっ食った">
+  <meta name="theme-color" content="#2E7D63">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <h1>なにっ食った</h1>
+
+  <div class="storage-warn hidden" id="storageWarn">
+    ⚠ この環境では記録を保存できません。ページを開いている間だけ記録が見られます（閉じると消えます）
+  </div>
+
+  <div class="card" id="inputCard">
+
+    <label for="dateInput">日付</label>
+    <input type="date" id="dateInput">
+
+    <label>時間帯</label>
+
+    <div class="period-row">
+      <button type="button" class="period-btn" data-period="朝">朝</button>
+      <button type="button" class="period-btn" data-period="昼">昼</button>
+      <button type="button" class="period-btn" data-period="晩">晩</button>
+    </div>
+
+    <label>主食・汁物</label>
+
+    <div class="toggle-row">
+      <button type="button" class="toggle-btn" id="toggleGohan">ごはん</button>
+      <button type="button" class="toggle-btn" id="toggleMiso">みそ汁</button>
+    </div>
+
+    <label>おかず（わかる範囲でOK）</label>
+
+    <input type="text" class="item-input" id="item2" placeholder="おかず1　例：焼き魚">
+    <input type="text" class="item-input" id="item3" placeholder="おかず2">
+    <input type="text" class="item-input" id="item4" placeholder="おかず3">
+    <input type="text" class="item-input" id="item5" placeholder="おかず4">
+    <input type="text" class="item-input" id="item6" placeholder="おかず5">
+
+    <label>ひとこと（任意）</label>
+
+    <input
+      type="text"
+      class="item-input"
+      id="comment"
+      placeholder="例：味が薄かった"
+    >
+
+    <button type="button" class="save-btn" id="saveBtn">
+      ✔ 記録する
+    </button>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <button
+      type="button"
+      class="cancel-edit-link hidden"
+      id="cancelEditBtn"
+    >
+      編集をやめる（新しい記録に戻る）
+    </button>
+
+  </div>
+
+
+  <h2>これまでの記録一覧</h2>
+
+  <div class="filter-label">
+    表示する時間帯を選んでください（何も選ばないと非表示）
+  </div>
+
+  <div class="filter-row" id="filterRow">
+
+    <button
+      type="button"
+      class="filter-btn"
+      data-period="朝"
+    >
+      朝
+    </button>
+
+    <button
+      type="button"
+      class="filter-btn"
+      data-period="昼"
+    >
+      昼
+    </button>
+
+    <button
+      type="button"
+      class="filter-btn"
+      data-period="晩"
+    >
+      晩
+    </button>
+
+  </div>
+
+
+  <div class="record-list" id="recordList">
+    <div class="empty-msg">読み込み中…</div>
+  </div>
+
+
+  <button
+    type="button"
+    class="danger-link"
+    id="clearAllBtn"
+  >
+    記録をすべて消去する
+  </button>
+
+</div>
+
+
+<div class="toast" id="toast">
+  ✔ 記録しました！
+</div>
+
+
+<div class="modal-overlay hidden" id="deleteModal">
+
+  <div class="modal-box">
+
+    <div class="modal-text" id="modalText">
+      この記録を削除しますか？
+    </div>
+
+    <div class="modal-btns">
+
+      <button
+        type="button"
+        class="modal-btn cancel"
+        id="modalCancelBtn"
+      >
+        キャンセル
+      </button>
+
+      <button
+        type="button"
+        class="modal-btn danger"
+        id="modalDeleteBtn"
+      >
+        削除する
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
