@@ -16,10 +16,16 @@
   --hiru-ink:#1673A8;
   --ban-bg:#E7E0F5;
   --ban-ink:#5A4197;
+  --bento-bg:#E2F3D8;
+  --bento-ink:#3E751F;
 }
 
 *{
   box-sizing:border-box;
+}
+
+.hidden{
+  display:none !important;
 }
 
 body{
@@ -121,6 +127,12 @@ input[type="date"]{
   background:var(--ban-bg);
   border-color:var(--ban-ink);
   color:var(--ban-ink);
+}
+
+.period-btn[data-period="弁当"].active{
+  background:var(--bento-bg);
+  border-color:var(--bento-ink);
+  color:var(--bento-ink);
 }
 
 .item-input{
@@ -274,6 +286,12 @@ input[type="date"]{
   color:var(--ban-ink);
 }
 
+.filter-btn[data-period="弁当"].active{
+  background:var(--bento-bg);
+  border-color:var(--bento-ink);
+  color:var(--bento-ink);
+}
+
 .day-block{
   margin-bottom:2px;
 }
@@ -335,6 +353,11 @@ input[type="date"]{
   color:var(--ban-ink);
 }
 
+.period-tag.弁当{
+  background:var(--bento-bg);
+  color:var(--bento-ink);
+}
+
 .item-chips{
   display:flex;
   flex-wrap:wrap;
@@ -356,6 +379,19 @@ input[type="date"]{
   border-radius:10px;
   background:#F2EEE6;
   border:1px solid var(--line);
+}
+
+button.chip{
+  color:inherit;
+  font-family:inherit;
+  line-height:inherit;
+  cursor:pointer;
+  text-align:left;
+}
+
+button.chip:focus-visible{
+  outline:3px solid var(--primary);
+  outline-offset:2px;
 }
 
 .chip.dup{
@@ -425,6 +461,79 @@ input[type="date"]{
   border:none;
   text-decoration:underline;
   cursor:pointer;
+}
+
+.history-panel{
+  background:#EAF5F0;
+  border:2px solid var(--primary);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px;
+  text-align:center;
+}
+
+.history-panel.hidden{
+  display:none;
+}
+
+.history-title{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.back-btn,
+.tool-btn{
+  min-height:52px;
+  font-size:18px;
+  font-weight:bold;
+  color:var(--primary-dark);
+  background:#fff;
+  border:2px solid var(--primary);
+  border-radius:12px;
+  padding:8px 14px;
+  cursor:pointer;
+}
+
+.data-tools{
+  margin-top:34px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--card);
+  color:var(--ink-soft);
+}
+
+.data-tools summary{
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.data-tools p{
+  font-size:16px;
+  margin:10px 0;
+}
+
+.data-tool-buttons{
+  display:flex;
+  gap:10px;
+}
+
+.data-tool-buttons .tool-btn{
+  flex:1;
+}
+
+.visually-hidden{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
 }
 
 .toast{
@@ -520,5 +629,19 @@ input[type="date"]{
   .record-head > div:last-child{
     flex-wrap:wrap;
     justify-content:flex-end;
+  }
+
+  .period-row,
+  .filter-row{
+    gap:6px;
+  }
+
+  .period-btn{
+    min-width:0;
+    font-size:20px;
+  }
+
+  .data-tool-buttons{
+    flex-direction:column;
   }
 }
