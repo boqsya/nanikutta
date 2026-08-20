@@ -36,8 +36,8 @@ input[type="date"]{width:100%;max-width:100%;box-sizing:border-box;-webkit-appea
 @media(max-width:480px){.app{padding-left:12px;padding-right:12px}.record-head{align-items:flex-start}.record-actions{flex-wrap:wrap;justify-content:flex-end}.period-row,.filter-row{gap:6px}.period-btn{min-width:0;font-size:20px}.data-tool-buttons{flex-direction:column}.dish-main-row{grid-template-columns:minmax(0,1fr) 96px}.comment-toggle{font-size:15px;padding:0 8px}}
 
 /* V3 additions */
-.select-input{appearance:auto;-webkit-appearance:menulist;background:#fff}.mini-note{font-size:15px;color:var(--ink-soft);margin-top:6px}.miso-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px;align-items:start}.miso-input{margin:0}.rice-entry{margin-bottom:0}
-@media(max-width:480px){.miso-row{grid-template-columns:1fr}.miso-row .toggle-btn{width:100%}.mini-note{font-size:14px}}
+.select-input{appearance:auto;-webkit-appearance:menulist;background:#fff}.mini-note{font-size:15px;color:var(--ink-soft);margin-top:6px}.miso-row{margin-top:18px}.miso-row .toggle-btn{width:100%;min-height:60px;text-align:left;padding-left:14px}.miso-input{margin:8px 0 0}.rice-entry{margin-bottom:0}
+@media(max-width:480px){.mini-note{font-size:14px}}
 
 </style>
 </head>
@@ -77,7 +77,7 @@ input[type="date"]{width:100%;max-width:100%;box-sizing:border-box;-webkit-appea
       <div class="mini-note" id="riceExcludedNote">※検索対象外</div>
 
       <div class="miso-row">
-        <button type="button" class="toggle-btn" id="toggleMiso">あり</button>
+        <button type="button" class="toggle-btn" id="toggleMiso">みそ汁　あり</button>
         <input type="text" class="item-input miso-input hidden" id="misoIngredients" placeholder="具　例：わかめ、豆腐、ねぎ">
       </div>
       <div class="mini-note hidden" id="misoExcludedNote">※検索対象外</div>
