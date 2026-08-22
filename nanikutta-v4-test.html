@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>なにっくった V4</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="なにっくった">
+<meta name="theme-color" content="#2E7D63">
+<style>
+:root{--primary:#2E7D63;--primary-dark:#1E5A47;--line:#D8D2C8;--card:#fff;--ink:#26231F;--ink-soft:#6B6258;--danger:#B23A2B;--bg:#F8F5EF;--dup-bg:#FFF0B8;--dup-ink:#7A5200;--asa-bg:#FFF0B8;--asa-ink:#8A6200;--hiru-bg:#DDEFFF;--hiru-ink:#245F91;--ban-bg:#E8E0F4;--ban-ink:#624B80;--bento-bg:#E3F1E5;--bento-ink:#386B3E}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}.hidden{display:none!important}.app{max-width:640px;margin:0 auto;padding:18px 12px 40px}h1{text-align:center;color:var(--primary-dark);font-size:30px;margin:8px 0 8px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 3px 10px rgba(0,0,0,.05)}h2{font-size:23px;margin:28px 0 10px;border-left:7px solid var(--primary);padding-left:10px}label{display:block;font-size:19px;font-weight:700;margin:16px 0 7px}input,select,button{font:inherit}
+input[type=date],.item-input,.select-input{width:100%;min-height:58px;font-size:21px;border:2px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--ink)}
+.period-row,.filter-row{display:flex;gap:7px}.period-btn,.filter-btn{flex:1;min-height:58px;border-radius:13px;border:2px solid var(--line);background:#fff;font-size:20px;font-weight:700;color:var(--ink-soft)}.period-btn.active,.filter-btn.active{color:#fff}.period-btn[data-period="朝"].active,.filter-btn[data-period="朝"].active{background:#C8951A;border-color:#C8951A}.period-btn[data-period="昼"].active,.filter-btn[data-period="昼"].active{background:#3F7FAE;border-color:#3F7FAE}.period-btn[data-period="晩"].active,.filter-btn[data-period="晩"].active{background:#705889;border-color:#705889}.period-btn[data-period="弁当"].active,.filter-btn[data-period="弁当"].active{background:#4C7C52;border-color:#4C7C52}
+.medicine-box{margin:0 0 14px}.medicine-box summary{list-style:none;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:18px;font-weight:700}.medicine-box summary::-webkit-details-marker{display:none}.medicine-state{color:var(--primary-dark)}.medicine-grid{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;padding:8px 12px 12px}.med-row{display:grid;grid-template-columns:90px 1fr 1fr;gap:7px;align-items:center;margin-top:8px}.med-label{font-size:18px;font-weight:700}.med-choice{min-height:46px;border:2px solid var(--line);border-radius:11px;background:#fff;font-size:18px;font-weight:700}.med-choice.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.food-section{margin-top:16px}.food-grid{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}.food-title{font-size:19px;font-weight:700;margin-bottom:7px}.dish-main-row{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:8px}.comment-toggle{min-height:58px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink-soft);font-size:16px;font-weight:700}.comment-toggle.active{background:#EAF5F0;border-color:var(--primary);color:var(--primary-dark)}.dish-comment-input{margin-top:7px;font-size:18px;min-height:52px}.mini-note{font-size:14px;color:var(--ink-soft);margin-top:5px}.miso-toggle{width:100%;min-height:58px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink-soft);font-size:21px;font-weight:700;text-align:left;padding:0 12px}.miso-toggle.active{background:var(--primary);border-color:var(--primary);color:#fff}.dish-entry{margin-bottom:9px}
+.save-btn{width:100%;min-height:70px;margin-top:12px;border:0;border-radius:16px;background:var(--primary);color:#fff;font-size:25px;font-weight:800}.error-msg{min-height:24px;margin-top:8px;text-align:center;color:var(--danger);font-size:18px;font-weight:700}.cancel-edit-link,.danger-link{display:block;margin:12px auto 0;border:0;background:none;text-decoration:underline;color:var(--ink-soft)}.storage-warn{background:#FDECEA;border:2px solid var(--danger);padding:10px;border-radius:12px;margin-bottom:10px}
+.filter-label{font-size:16px;color:var(--ink-soft);margin-bottom:6px}.filter-btn{min-height:48px;opacity:.55}.filter-btn.active{opacity:1}.record-card,.history-record{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:11px}.record-head{display:flex;align-items:center;gap:7px;white-space:nowrap;margin-bottom:9px}.record-date{font-size:17px;font-weight:800;flex:1}.period-tag{font-size:16px;font-weight:800;padding:4px 10px;border-radius:999px}.period-tag.朝{background:var(--asa-bg);color:var(--asa-ink)}.period-tag.昼{background:var(--hiru-bg);color:var(--hiru-ink)}.period-tag.晩{background:var(--ban-bg);color:var(--ban-ink)}.period-tag.弁当{background:var(--bento-bg);color:var(--bento-ink)}.edit-btn,.del-btn{min-height:38px;border-radius:9px;padding:0 9px;font-size:15px}.edit-btn{background:#EAF5F0;border:1px solid var(--primary);color:var(--primary-dark);font-weight:700}.del-btn{background:#fff;border:1px solid var(--line);color:var(--ink-soft)}
+.item-chips{display:flex;flex-wrap:wrap;gap:7px;align-items:flex-start}.dish-chip-group{display:flex;flex-direction:column;align-items:flex-start}.chip{font-size:19px;padding:7px 11px;border-radius:9px;background:#F2EEE6;border:1px solid var(--line)}button.chip{color:inherit}.chip.dup{background:var(--dup-bg);border-color:#C88A00;color:var(--dup-ink);font-weight:800}.dup-badge{font-size:13px;background:var(--dup-ink);color:#fff;border-radius:5px;padding:1px 5px;margin-left:5px}.dish-inline-comment{font-size:15px;color:var(--ink-soft);padding:3px 3px 0}.empty-msg{text-align:center;padding:18px;color:var(--ink-soft);font-size:18px}.more-btn{width:100%;min-height:52px;border:2px dashed var(--primary);border-radius:12px;background:#fff;color:var(--primary-dark);font-weight:700}.history-panel{background:#EAF5F0;border:2px solid var(--primary);border-radius:13px;padding:12px;margin-bottom:12px;text-align:center}.back-btn{min-height:46px;border:2px solid var(--primary);border-radius:10px;background:#fff;color:var(--primary-dark);font-weight:700}
+.data-tools{margin-top:28px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}.data-tool-buttons{display:flex;gap:8px}.tool-btn{flex:1;min-height:48px;border:2px solid var(--primary);border-radius:10px;background:#fff;color:var(--primary-dark);font-weight:700}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(16px);background:var(--primary-dark);color:#fff;padding:15px 24px;border-radius:15px;font-size:21px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:400}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.48);display:flex;align-items:center;justify-content:center;padding:16px;z-index:300}.modal-box{background:#fff;border-radius:20px;padding:22px 18px;max-width:430px;width:100%;text-align:center}.modal-text{font-size:22px;font-weight:800;margin-bottom:16px}.modal-btns{display:flex;gap:9px}.modal-btn{flex:1;min-height:58px;border-radius:13px;font-size:20px;font-weight:800}.modal-btn.cancel{background:#fff;border:2px solid var(--line)}.modal-btn.danger{background:var(--danger);color:#fff;border:0}
+.med-modal-box{max-width:520px}.med-question{font-size:30px;font-weight:900;margin:2px 0 18px}.med-action-row{display:flex;gap:10px}.med-action{flex:1;min-height:78px;border:3px solid var(--line);border-radius:16px;background:#fff;font-size:25px;font-weight:900}.med-action:active,.med-action.selected{background:var(--primary);border-color:var(--primary);color:#fff}.pending-list{text-align:left}.pending-title{font-size:28px;font-weight:900;text-align:center;margin-bottom:15px}.pending-row{border-top:1px solid var(--line);padding:11px 0}.pending-row:first-child{border-top:0}.pending-date{font-size:19px;font-weight:800;margin-bottom:7px}.pending-actions{display:flex;gap:8px}.pending-actions button{flex:1;min-height:50px;border:2px solid var(--line);border-radius:11px;background:#fff;font-size:18px;font-weight:800}.pending-actions button.selected{background:var(--primary);border-color:var(--primary);color:#fff}
+@media(max-width:430px){.app{padding-left:9px;padding-right:9px}.card{padding:14px}.record-head{gap:5px}.record-date{font-size:15.5px}.period-tag{font-size:14px;padding:4px 8px}.edit-btn,.del-btn{font-size:14px;padding:0 7px}.food-grid{gap:8px}.dish-main-row{grid-template-columns:minmax(0,1fr) 90px}}
+</style>
+</head>
+<body>
+<main class="app">
+<h1>なにっくった</h1>
+
+<details class="medicine-box" id="medicineBox">
+<summary>くすり　<span class="medicine-state" id="medicineState">なし</span> ▼</summary>
+<div class="medicine-grid">
+<div class="med-row"><span class="med-label">朝食後</span><button class="med-choice" data-med-period="朝" data-value="yes">あり</button><button class="med-choice" data-med-period="朝" data-value="no">なし</button></div>
+<div class="med-row"><span class="med-label">昼食後</span><button class="med-choice" data-med-period="昼" data-value="yes">あり</button><button class="med-choice" data-med-period="昼" data-value="no">なし</button></div>
+<div class="med-row"><span class="med-label">晩飯後</span><button class="med-choice" data-med-period="晩" data-value="yes">あり</button><button class="med-choice" data-med-period="晩" data-value="no">なし</button></div>
+</div>
+</details>
+
+<div class="storage-warn hidden" id="storageWarn">⚠ この環境では記録を保存できません</div>
+<section class="card" id="inputCard">
+<label for="dateInput">日付</label><input type="date" id="dateInput">
+<label>時間帯</label>
+<div class="period-row">
+<button type="button" class="period-btn" data-period="朝">朝</button><button type="button" class="period-btn" data-period="昼">昼</button><button type="button" class="period-btn" data-period="晩">晩</button><button type="button" class="period-btn" data-period="弁当">弁当</button>
+</div>
+
+<div class="food-section">
+<div class="food-grid">
+<div>
+<div class="food-title">ごはん・パン</div>
+<div class="dish-main-row">
+<select id="riceSelect" class="item-input select-input">
+<option value="なし" selected>なし</option>
+<option value="白ごはん">白ごはん</option>
+<option value="食パン">食パン</option>
+<option value="菓子パン">菓子パン</option>
+<option value="惣菜パン">惣菜パン</option>
+<option value="ふくらかん">ふくらかん</option>
+<option value="チャーハン">チャーハン</option>
+<option value="オムライス">オムライス</option>
+<option value="おかゆ">おかゆ</option>
+<option value="おじや">おじや</option>
+<option value="赤飯">赤飯</option>
+<option value="カレー">カレー</option>
+<option value="丼物">丼物</option>
+</select>
+<button type="button" class="comment-toggle" id="riceCommentToggle" aria-expanded="false">ひとこと</button>
+</div>
+<input type="text" class="item-input dish-comment-input hidden" id="riceComment" placeholder="ごはん・パンへのひとこと">
+<div class="mini-note hidden" id="riceExcludedNote">※検索対象外</div>
+</div>
+<div>
+<div class="food-title">みそ汁</div>
+<div class="dish-main-row">
+<button type="button" class="miso-toggle" id="toggleMiso">みそ汁</button>
+<button type="button" class="comment-toggle" id="misoCommentToggle" aria-expanded="false">ひとこと</button>
+</div>
+<input type="text" class="item-input dish-comment-input hidden" id="misoComment" placeholder="みそ汁へのひとこと">
+</div>
+</div>
+</div>
+
+<label>おかず（わかる範囲でOK）</label>
+<div id="dishInputs">
+<div class="dish-entry" data-index="0"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish0" placeholder="おかず1　例：焼き魚"><button type="button" class="comment-toggle" data-index="0" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment0" placeholder="この料理へのひとこと"></div>
+<div class="dish-entry hidden" data-index="1"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish1" placeholder="おかず2"><button type="button" class="comment-toggle" data-index="1" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment1" placeholder="この料理へのひとこと"></div>
+<div class="dish-entry hidden" data-index="2"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish2" placeholder="おかず3"><button type="button" class="comment-toggle" data-index="2" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment2" placeholder="この料理へのひとこと"></div>
+<div class="dish-entry hidden" data-index="3"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish3" placeholder="おかず4"><button type="button" class="comment-toggle" data-index="3" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment3" placeholder="この料理へのひとこと"></div>
+<div class="dish-entry hidden" data-index="4"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish4" placeholder="おかず5"><button type="button" class="comment-toggle" data-index="4" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment4" placeholder="この料理へのひとこと"></div>
+</div>
+<button type="button" class="save-btn" id="saveBtn">✔ 記録する</button>
+<div class="error-msg" id="errorMsg"></div>
+<button type="button" class="cancel-edit-link hidden" id="cancelEditBtn">編集をやめる</button>
+</section>
+
+<h2>これまでの記録一覧</h2>
+<div class="filter-label" id="filterLabel">表示する時間帯を選んでください</div>
+<div class="filter-row" id="filterRow"><button class="filter-btn" data-period="朝">朝</button><button class="filter-btn" data-period="昼">昼</button><button class="filter-btn" data-period="晩">晩</button><button class="filter-btn" data-period="弁当">弁当</button></div>
+<section class="history-panel hidden" id="historyPanel"><div id="historyTitle"></div><button class="back-btn" id="backToListBtn">← 通常の一覧に戻る</button></section>
+<div id="recordList"><div class="empty-msg">読み込み中…</div></div>
+
+<details class="data-tools"><summary>バックアップ・復元</summary><p>記録をファイルに保存したり戻したりできます。</p><div class="data-tool-buttons"><button class="tool-btn" id="backupBtn">バックアップを書き出す</button><button class="tool-btn" id="restoreBtn">バックアップから復元</button></div><input type="file" id="restoreFileInput" accept="application/json,.json" class="visually-hidden"></details>
+<button class="danger-link" id="clearAllBtn">記録をすべて消去する</button>
+</main>
+
+<div class="toast" id="toast">✔ 記録しました！</div>
+
+<div class="modal-overlay hidden" id="deleteModal"><div class="modal-box"><div class="modal-text" id="modalText">この記録を削除しますか？</div><div class="modal-btns"><button class="modal-btn cancel" id="modalCancelBtn">キャンセル</button><button class="modal-btn danger" id="modalDeleteBtn">削除する</button></div></div></div>
+
+<div class="modal-overlay hidden" id="medicineModal"><div class="modal-box med-modal-box"><div class="med-question">💊 くすり飲んだ？</div><div class="med-action-row"><button class="med-action" id="medicineTakenBtn">飲んだ</button><button class="med-action" id="medicinePendingBtn">まだ</button></div></div></div>
+
+<div class="modal-overlay hidden" id="pendingMedicineModal"><div class="modal-box med-modal-box"><div class="pending-title">💊 くすり飲んだ？</div><div class="pending-list" id="pendingMedicineList"></div></div></div>
+
+<script>
+const STORAGE_KEY="meal-records-v4";
+const LEGACY_KEYS=["meal-records-v3","meal-records-v1"];
+const MED_SETTINGS_KEY="nanikutta-med-settings-v1";
+const PERIODS=["朝","昼","晩","弁当"],ORDER=Object.fromEntries(PERIODS.map((x,i)=>[x,i]));
+const RICE_OPTIONS=["なし","白ごはん","食パン","菓子パン","惣菜パン","ふくらかん","チャーハン","オムライス","おかゆ","おじや","赤飯","カレー","丼物"];
+let records=[],selectedPeriod=null,activeFilterPeriods=new Set(),showAll=false,editingId=null,historyDish=null,pendingAction=null,pendingDeleteId=null,pendingRestoreRecords=null,toastTimer,currentSavedId=null,storageAvailable=true;
+let medSettings={朝:false,昼:false,晩:false};
+const $=id=>document.getElementById(id);
+const dateInput=$("dateInput"),recordListEl=$("recordList"),errorMsg=$("errorMsg"),saveBtn=$("saveBtn"),toggleMiso=$("toggleMiso"),riceSelect=$("riceSelect"),riceComment=$("riceComment"),misoComment=$("misoComment");
+function todayStr(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
+function parseDate(s){const [y,m,d]=String(s).split("-").map(Number);return new Date(y,m-1,d)}
+function formatDateShort(s){const d=parseDate(s),reiwa=d.getFullYear()-2018;return `R${reiwa}/${d.getMonth()+1}/${d.getDate()}`}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function baseName(v){return String(v).normalize("NFKC").toLowerCase().replace(/[\s　・･]/g,"").replace(/[〜～]/g,"ー")}
+const ALIAS_GROUPS=[["玉子焼き","卵焼き","たまご焼き","玉子やき","卵やき","たまごやき"],["唐揚げ","から揚げ","からあげ"]];
+const ALIASES=new Map();ALIAS_GROUPS.forEach((g,i)=>g.forEach(x=>ALIASES.set(baseName(x),`alias:${i}`)));
+function normalizeDish(v){const n=baseName(v);return ALIASES.get(n)||`text:${n}`}
+function isMatch(a,b){const x=normalizeDish(a),y=normalizeDish(b);return x!=="text:"&&x===y}
+function createId(){let id=Date.now();while(records.some(r=>String(r.id)===String(id)))id++;return id}
+function migrateRecord(r){
+ if(!r||typeof r!=="object"||!/^\d{4}-\d{2}-\d{2}$/.test(String(r.date))||!PERIODS.includes(r.period))return null;
+ const riceRaw=String(r.rice||"なし"); const rice=RICE_OPTIONS.includes(riceRaw)?riceRaw:(riceRaw==="白ご飯"?"白ごはん":"なし");
+ return {id:r.id??createId(),date:r.date,period:r.period,rice,riceComment:typeof r.riceComment==="string"?r.riceComment:"",miso:Boolean(r.miso),misoComment:typeof r.misoComment==="string"?r.misoComment:(typeof r.misoIngredients==="string"?r.misoIngredients:""),dishes:Array.from({length:5},(_,i)=>Array.isArray(r.dishes)&&typeof r.dishes[i]==="string"?r.dishes[i]:""),dishComments:Array.from({length:5},(_,i)=>Array.isArray(r.dishComments)&&typeof r.dishComments[i]==="string"?r.dishComments[i]:""),medicineStatus:["taken","pending","missed","none"].includes(r.medicineStatus)?r.medicineStatus:"none"};
+}
+function validateRecords(v){if(!Array.isArray(v))throw new Error("invalid");return v.map(migrateRecord).filter(Boolean)}
+function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(records));return true}catch(e){storageAvailable=false;$("storageWarn").classList.remove("hidden");return false}}
+function loadMedSettings(){try{const x=JSON.parse(localStorage.getItem(MED_SETTINGS_KEY)||"null");if(x)medSettings={朝:!!x.朝,昼:!!x.昼,晩:!!x.晩}}catch(_){} renderMedSettings()}
+function saveMedSettings(){try{localStorage.setItem(MED_SETTINGS_KEY,JSON.stringify(medSettings))}catch(_){} renderMedSettings()}
+function renderMedSettings(){document.querySelectorAll(".med-choice").forEach(b=>{const yes=b.dataset.value==="yes",on=medSettings[b.dataset.medPeriod]===yes;b.classList.toggle("active",on)});$("medicineState").textContent=Object.values(medSettings).some(Boolean)?"あり":"なし"}
+function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)records=validateRecords(JSON.parse(raw));else{for(const k of LEGACY_KEYS){const old=localStorage.getItem(k);if(old){records=validateRecords(JSON.parse(old));if(records.length){persist();break}}}}}catch(e){records=[];$("storageWarn").classList.remove("hidden")}renderList();showPendingMedicineIfNeeded()}
+function showToast(msg){clearTimeout(toastTimer);$("toast").textContent=msg;$("toast").classList.add("show");toastTimer=setTimeout(()=>$("toast").classList.remove("show"),1600)}
+function range(){const t=parseDate(todayStr()),c=new Date(t);c.setDate(c.getDate()-29);return{today:t,cutoff:c}}
+function searchableEntries(r){const out=[];if(r.rice!=="白ごはん"&&r.rice!=="なし")out.push({key:`${r.id}-rice`,name:r.rice,comment:r.riceComment||""});r.dishes.forEach((n,i)=>{if(n?.trim())out.push({key:`${r.id}-dish-${i}`,name:n,comment:r.dishComments[i]||""})});return out}
+function highlightKeys(){const {today,cutoff}=range(),pool=[];records.forEach(r=>{const d=parseDate(r.date);if(!activeFilterPeriods.has(r.period)||d<cutoff||d>today)return;pool.push(...searchableEntries(r))});const c=new Map();pool.forEach(x=>c.set(normalizeDish(x.name),(c.get(normalizeDish(x.name))||0)+1));return new Set(pool.filter(x=>c.get(normalizeDish(x.name))>1).map(x=>x.key))}
+function chip(name,key,comment,keys){const dup=keys.has(key);return `<div class="dish-chip-group"><button class="chip${dup?" dup":""}" data-dish="${esc(name)}">${esc(name)}${dup?'<span class="dup-badge">重複</span>':""}</button>${comment?.trim()?`<div class="dish-inline-comment">💬 ${esc(comment)}</div>`:""}</div>`}
+function card(r,keys){let chips="";if(r.rice!=="なし"){if(r.rice==="白ごはん")chips+=`<span class="chip">白ごはん</span>`;else chips+=chip(r.rice,`${r.id}-rice`,r.riceComment,keys)}if(r.miso)chips+=`<div class="dish-chip-group"><span class="chip">みそ汁</span>${r.misoComment?.trim()?`<div class="dish-inline-comment">💬 ${esc(r.misoComment)}</div>`:""}</div>`;r.dishes.forEach((n,i)=>{if(n?.trim())chips+=chip(n,`${r.id}-dish-${i}`,r.dishComments[i],keys)});return `<article class="record-card"><div class="record-head"><div class="record-date">${formatDateShort(r.date)}</div><span class="period-tag ${r.period}">${r.period}</span><button class="edit-btn" data-id="${esc(r.id)}">編集</button><button class="del-btn" data-id="${esc(r.id)}">削除</button></div><div class="item-chips">${chips||'<span class="empty-msg">食事内容なし</span>'}</div></article>`}
+function renderNormal(){if(!records.length){recordListEl.innerHTML='<div class="empty-msg">まだ記録がありません</div>';return}if(!activeFilterPeriods.size){recordListEl.innerHTML='<div class="empty-msg">上から見たい時間帯を選んでください</div>';return}const {today,cutoff}=range(),f=records.filter(r=>activeFilterPeriods.has(r.period)),dates=[...new Set(f.map(r=>r.date))].sort((a,b)=>b.localeCompare(a)),shown=showAll?dates:dates.filter(s=>{const d=parseDate(s);return d>=cutoff&&d<=today}),more=!showAll&&dates.some(s=>parseDate(s)<cutoff),keys=highlightKeys();let h=shown.map(d=>f.filter(r=>r.date===d).sort((a,b)=>ORDER[a.period]-ORDER[b.period]).map(r=>card(r,keys)).join("")).join("")||'<div class="empty-msg">記録がありません</div>';if(more)h+='<button class="more-btn" id="showAllBtn">＋もっと見る</button>';recordListEl.innerHTML=h}
+function historyOccurrences(dish){const a=[];records.forEach(r=>searchableEntries(r).forEach(x=>{if(isMatch(x.name,dish))a.push({date:r.date,period:r.period,dish:x.name,comment:x.comment})}));return a.sort((a,b)=>b.date.localeCompare(a.date)||ORDER[a.period]-ORDER[b.period])}
+function renderHistory(){const list=historyOccurrences(historyDish);$("historyTitle").textContent=`「${historyDish}」の履歴（${list.length}件）`;recordListEl.innerHTML=list.map(x=>`<article class="history-record"><div class="record-head"><div class="record-date">${formatDateShort(x.date)}</div><span class="period-tag ${x.period}">${x.period}</span></div><div class="chip">${esc(x.dish)}</div>${x.comment?`<div class="dish-inline-comment">💬 ${esc(x.comment)}</div>`:""}</article>`).join("")||'<div class="empty-msg">履歴はありません</div>'}
+function renderList(){historyDish?renderHistory():renderNormal()}
+function setComment(btn,input,open){btn.classList.toggle("active",open);btn.setAttribute("aria-expanded",String(open));input.classList.toggle("hidden",!open)}
+function updateDishVisibility(){let highest=-1;for(let i=0;i<5;i++)if($("dish"+i).value.trim()||$("dishComment"+i).value.trim())highest=i;const through=highest<0?0:Math.min(4,highest+1);for(let i=0;i<5;i++)document.querySelector(`.dish-entry[data-index="${i}"]`).classList.toggle("hidden",i>through)}
+function resetForm(){dateInput.value=todayStr();selectedPeriod=null;document.querySelectorAll(".period-btn").forEach(b=>b.classList.remove("active"));riceSelect.value="なし";riceComment.value="";setComment($("riceCommentToggle"),riceComment,false);toggleMiso.classList.remove("active");toggleMiso.textContent="みそ汁";misoComment.value="";setComment($("misoCommentToggle"),misoComment,false);for(let i=0;i<5;i++){$("dish"+i).value="";$("dishComment"+i).value="";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),false)}updateDishVisibility();updateRiceNote()}
+function updateRiceNote(){$("riceExcludedNote").classList.toggle("hidden",!["なし","白ごはん"].includes(riceSelect.value))}
+function startEdit(r){editingId=r.id;dateInput.value=r.date;selectedPeriod=r.period;document.querySelectorAll(".period-btn").forEach(b=>b.classList.toggle("active",b.dataset.period===r.period));riceSelect.value=r.rice;riceComment.value=r.riceComment;setComment($("riceCommentToggle"),riceComment,!!r.riceComment);toggleMiso.classList.toggle("active",r.miso);toggleMiso.textContent=r.miso?"みそ汁　あり":"みそ汁";misoComment.value=r.misoComment;setComment($("misoCommentToggle"),misoComment,!!r.misoComment);for(let i=0;i<5;i++){$("dish"+i).value=r.dishes[i]||"";$("dishComment"+i).value=r.dishComments[i]||"";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),!!r.dishComments[i])}updateDishVisibility();updateRiceNote();saveBtn.textContent="✔ 変更を保存";$("cancelEditBtn").classList.remove("hidden");$("inputCard").scrollIntoView({behavior:"smooth",block:"start"})}
+function finishEdit(){editingId=null;saveBtn.textContent="✔ 記録する";$("cancelEditBtn").classList.add("hidden")}
+function shouldAskMedicine(period){return ["朝","昼","晩"].includes(period)&&medSettings[period]}
+function openMedicineModal(id){currentSavedId=id;$("medicineModal").classList.remove("hidden")}
+function closeMedicineModal(){$("medicineModal").classList.add("hidden");currentSavedId=null}
+function setMedicineStatus(id,status){const r=records.find(x=>String(x.id)===String(id));if(!r)return;r.medicineStatus=status;persist()}
+function showPendingMedicineIfNeeded(){const p=records.filter(r=>r.medicineStatus==="pending").sort((a,b)=>a.date.localeCompare(b.date)||ORDER[a.period]-ORDER[b.period]);if(!p.length)return;$("pendingMedicineList").innerHTML=p.map(r=>`<div class="pending-row" data-id="${esc(r.id)}"><div class="pending-date">${formatDateShort(r.date)} ${r.period}食後</div><div class="pending-actions"><button data-med-result="taken">飲んだ</button><button data-med-result="missed">忘れてた</button></div></div>`).join("");$("pendingMedicineModal").classList.remove("hidden")}
+function closePendingIfEmpty(){if(!$("pendingMedicineList").querySelector(".pending-row"))$("pendingMedicineModal").classList.add("hidden")}
+document.querySelectorAll(".med-choice").forEach(b=>b.addEventListener("click",()=>{medSettings[b.dataset.medPeriod]=b.dataset.value==="yes";saveMedSettings()}));
+document.querySelectorAll(".period-btn").forEach(b=>b.addEventListener("click",()=>{selectedPeriod=b.dataset.period;document.querySelectorAll(".period-btn").forEach(x=>x.classList.toggle("active",x===b))}));
+document.querySelectorAll(".filter-btn").forEach(b=>b.addEventListener("click",()=>{const p=b.dataset.period;activeFilterPeriods.has(p)?activeFilterPeriods.delete(p):activeFilterPeriods.add(p);b.classList.toggle("active",activeFilterPeriods.has(p));showAll=false;renderList()}));
+riceSelect.addEventListener("change",updateRiceNote);
+$("riceCommentToggle").addEventListener("click",()=>{const o=$("riceCommentToggle").getAttribute("aria-expanded")!=="true";setComment($("riceCommentToggle"),riceComment,o);if(o)riceComment.focus()});
+toggleMiso.addEventListener("click",()=>{const on=!toggleMiso.classList.contains("active");toggleMiso.classList.toggle("active",on);toggleMiso.textContent=on?"みそ汁　あり":"みそ汁"});
+$("misoCommentToggle").addEventListener("click",()=>{const o=$("misoCommentToggle").getAttribute("aria-expanded")!=="true";setComment($("misoCommentToggle"),misoComment,o);if(o)misoComment.focus()});
+document.querySelectorAll(".dish-name-input,.dish-comment-input").forEach(e=>e.addEventListener("input",updateDishVisibility));
+document.querySelectorAll('.comment-toggle[data-index]').forEach(b=>b.addEventListener("click",()=>{const i=Number(b.dataset.index),o=b.getAttribute("aria-expanded")!=="true";setComment(b,$("dishComment"+i),o);if(o)$("dishComment"+i).focus()}));
+saveBtn.addEventListener("click",()=>{errorMsg.textContent="";if(!dateInput.value){errorMsg.textContent="日付を選んでください";return}if(!selectedPeriod){errorMsg.textContent="「朝」「昼」「晩」「弁当」を選んでください";return}const dishes=Array.from({length:5},(_,i)=>$("dish"+i).value.trim()),comments=Array.from({length:5},(_,i)=>$("dishComment"+i).value.trim());for(let i=0;i<5;i++)if(comments[i]&&!dishes[i]){errorMsg.textContent=`おかず${i+1}の料理名を入力してください`;return}const r={id:editingId??createId(),date:dateInput.value,period:selectedPeriod,rice:riceSelect.value,riceComment:riceComment.value.trim(),miso:toggleMiso.classList.contains("active"),misoComment:misoComment.value.trim(),dishes,dishComments:comments,medicineStatus:"none"},wasEditing=editingId!==null;if(wasEditing){const i=records.findIndex(x=>String(x.id)===String(editingId));if(i>=0)r.medicineStatus=records[i].medicineStatus;records[i]=r}else{r.medicineStatus=shouldAskMedicine(r.period)?"pending":"none";records.push(r)}persist();finishEdit();resetForm();renderList();showToast(wasEditing?"✔ 変更しました！":"✔ 記録しました！");if(!wasEditing&&shouldAskMedicine(r.period))setTimeout(()=>openMedicineModal(r.id),250)});
+$("medicineTakenBtn").addEventListener("click",()=>{if(currentSavedId!=null)setMedicineStatus(currentSavedId,"taken");$("medicineTakenBtn").classList.add("selected");setTimeout(()=>{closeMedicineModal();showToast("くすり　飲んだ")},220)});
+$("medicinePendingBtn").addEventListener("click",()=>{if(currentSavedId!=null)setMedicineStatus(currentSavedId,"pending");$("medicinePendingBtn").classList.add("selected");setTimeout(()=>{closeMedicineModal();showToast("くすり　まだ")},220)});
+$("pendingMedicineList").addEventListener("click",e=>{const b=e.target.closest("button[data-med-result]");if(!b)return;const row=b.closest(".pending-row"),id=row.dataset.id;setMedicineStatus(id,b.dataset.medResult);b.classList.add("selected");setTimeout(()=>{row.remove();closePendingIfEmpty()},220)});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&$("medicineModal").classList.contains("hidden"))showPendingMedicineIfNeeded()});
+window.addEventListener("pageshow",()=>{if($("medicineModal").classList.contains("hidden"))showPendingMedicineIfNeeded()});
+recordListEl.addEventListener("click",e=>{const d=e.target.closest(".del-btn");if(d){pendingAction="record";pendingDeleteId=d.dataset.id;$("modalText").textContent="この記録を削除しますか？";$("deleteModal").classList.remove("hidden");return}const ed=e.target.closest(".edit-btn");if(ed){const r=records.find(x=>String(x.id)===ed.dataset.id);if(r)startEdit(r);return}const ch=e.target.closest("button.chip[data-dish]");if(ch){historyDish=ch.dataset.dish;$("historyPanel").classList.remove("hidden");$("filterRow").classList.add("hidden");$("filterLabel").classList.add("hidden");renderList();return}if(e.target.closest("#showAllBtn")){showAll=true;renderList()}});
+$("backToListBtn").addEventListener("click",()=>{historyDish=null;$("historyPanel").classList.add("hidden");$("filterRow").classList.remove("hidden");$("filterLabel").classList.remove("hidden");renderList()});
+$("cancelEditBtn").addEventListener("click",()=>{finishEdit();resetForm()});
+$("modalCancelBtn").addEventListener("click",()=>{$("deleteModal").classList.add("hidden");pendingAction=null;pendingDeleteId=null;pendingRestoreRecords=null});
+$("modalDeleteBtn").addEventListener("click",()=>{if(pendingAction==="record")records=records.filter(r=>String(r.id)!==String(pendingDeleteId));else if(pendingAction==="clear"){records=[]}else if(pendingAction==="restore"&&pendingRestoreRecords)records=pendingRestoreRecords;persist();renderList();$("deleteModal").classList.add("hidden");pendingAction=null;pendingDeleteId=null;pendingRestoreRecords=null});
+$("clearAllBtn").addEventListener("click",()=>{pendingAction="clear";$("modalText").textContent="すべての記録を消去しますか？";$("deleteModal").classList.remove("hidden")});
+$("backupBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify({app:"なにっくった",version:4,records},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`nanikutta-v4-backup-${todayStr()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)});
+$("restoreBtn").addEventListener("click",()=>{$("restoreFileInput").value="";$("restoreFileInput").click()});
+$("restoreFileInput").addEventListener("change",async()=>{const f=$("restoreFileInput").files?.[0];if(!f)return;try{const p=JSON.parse(await f.text());pendingRestoreRecords=validateRecords(Array.isArray(p)?p:p.records);pendingAction="restore";$("modalText").textContent="現在の記録をバックアップで置き換えますか？";$("deleteModal").classList.remove("hidden")}catch(e){errorMsg.textContent="バックアップを読み込めませんでした"}});
+dateInput.value=todayStr();loadMedSettings();load();updateRiceNote();updateDishVisibility();
+</script>
+</body>
+</html>
