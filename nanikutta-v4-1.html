@@ -14,15 +14,16 @@
 :root{--primary:#2E7D63;--primary-dark:#1E5A47;--line:#D8D2C8;--card:#fff;--ink:#26231F;--ink-soft:#6B6258;--danger:#B23A2B;--bg:#F8F5EF;--dup-bg:#FFF0B8;--dup-ink:#7A5200;--asa-bg:#FFF0B8;--asa-ink:#8A6200;--hiru-bg:#DDEFFF;--hiru-ink:#245F91;--ban-bg:#E8E0F4;--ban-ink:#624B80;--bento-bg:#E3F1E5;--bento-ink:#386B3E}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}.hidden{display:none!important}.app{max-width:640px;margin:0 auto;padding:18px 12px 40px}h1{text-align:center;color:var(--primary-dark);font-size:30px;margin:8px 0 8px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 3px 10px rgba(0,0,0,.05);overflow:hidden}h2{font-size:23px;margin:28px 0 10px;border-left:7px solid var(--primary);padding-left:10px}label{display:block;font-size:19px;font-weight:700;margin:16px 0 7px}input,select,button{font:inherit}
 input[type=date],.item-input,.select-input{width:100%;max-width:100%;min-width:0;min-height:58px;font-size:21px;border:2px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--ink)}
-input[type=date]{
-  display:block;
-  width:100%!important;
-  max-width:100%!important;
+.date-wrap{display:flex;width:100%;min-width:0;overflow:hidden}
+.date-wrap input[type=date]{
+  flex:1 1 0;
+  width:0!important;
   min-width:0!important;
+  max-width:100%!important;
   box-sizing:border-box!important;
+  margin:0!important;
   -webkit-appearance:none;
   appearance:none;
-  overflow:hidden;
 }
 .period-row,.filter-row{display:flex;gap:7px}.period-btn,.filter-btn{flex:1;min-height:58px;border-radius:13px;border:2px solid var(--line);background:#fff;font-size:20px;font-weight:700;color:var(--ink-soft)}.period-btn.active,.filter-btn.active{color:#fff}.period-btn[data-period="朝"].active,.filter-btn[data-period="朝"].active{background:#C8951A;border-color:#C8951A}.period-btn[data-period="昼"].active,.filter-btn[data-period="昼"].active{background:#3F7FAE;border-color:#3F7FAE}.period-btn[data-period="晩"].active,.filter-btn[data-period="晩"].active{background:#705889;border-color:#705889}.period-btn[data-period="弁当"].active,.filter-btn[data-period="弁当"].active{background:#4C7C52;border-color:#4C7C52}
 .medicine-box{margin:0 0 14px}.medicine-box summary{list-style:none;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:18px;font-weight:700}.medicine-box summary::-webkit-details-marker{display:none}.medicine-state{color:var(--primary-dark)}.medicine-grid{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;padding:8px 12px 12px}.med-row{display:grid;grid-template-columns:90px 1fr 1fr;gap:7px;align-items:center;margin-top:8px}.med-label{font-size:18px;font-weight:700}.med-choice{min-height:46px;border:2px solid var(--line);border-radius:11px;background:#fff;font-size:18px;font-weight:700}.med-choice.active{background:var(--primary);border-color:var(--primary);color:#fff}
@@ -52,7 +53,7 @@ input[type=date]{
 
 <div class="storage-warn hidden" id="storageWarn">⚠ この環境では記録を保存できません</div>
 <section class="card" id="inputCard">
-<label for="dateInput">日付</label><input type="date" id="dateInput">
+<label for="dateInput">日付</label><div class="date-wrap"><input type="date" id="dateInput"></div>
 <label>時間帯</label>
 <div class="period-row">
 <button type="button" class="period-btn" data-period="朝">朝</button><button type="button" class="period-btn" data-period="昼">昼</button><button type="button" class="period-btn" data-period="晩">晩</button><button type="button" class="period-btn" data-period="弁当">弁当</button>
