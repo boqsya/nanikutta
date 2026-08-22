@@ -94,7 +94,7 @@ input[type=date],.item-input,.select-input{width:100%;min-height:58px;font-size:
 <div class="dish-entry hidden" data-index="3"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish3" placeholder="おかず4"><button type="button" class="comment-toggle" data-index="3" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment3" placeholder="この料理へのひとこと"></div>
 <div class="dish-entry hidden" data-index="4"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish4" placeholder="おかず5"><button type="button" class="comment-toggle" data-index="4" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment4" placeholder="この料理へのひとこと"></div>
 </div>
-<button type="button" class="save-btn" id="saveBtn">✔ 記録する</button>
+<button type="button" class="save-btn disabled-look" id="saveBtn" disabled>✔ 記録する</button>
 <div class="error-msg" id="errorMsg"></div>
 <button type="button" class="cancel-edit-link hidden" id="cancelEditBtn">編集をやめる</button>
 </section>
@@ -125,6 +125,7 @@ const PERIODS=["朝","昼","晩","弁当"],ORDER=Object.fromEntries(PERIODS.map(
 const RICE_OPTIONS=["なし","白ごはん","パン","ふくらかん","チャーハン","オムライス","おかゆ","おじや","赤飯","カレー","丼物"];
 let records=[],selectedPeriod=null,activeFilterPeriods=new Set(),showAll=false,editingId=null,historyDish=null,pendingAction=null,pendingDeleteId=null,pendingRestoreRecords=null,toastTimer,currentSavedId=null,storageAvailable=true,tempMedicineStatus="none";
 let medSettings={朝:false,昼:false,晩:false};
+let pendingMealRecord=null;
 const $=id=>document.getElementById(id);
 const dateInput=$("dateInput"),recordListEl=$("recordList"),errorMsg=$("errorMsg"),saveBtn=$("saveBtn"),riceSelect=$("riceSelect"),drinkSelect=$("drinkSelect"),riceComment=$("riceComment"),misoComment=$("misoComment");
 function todayStr(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
@@ -183,27 +184,28 @@ $("riceCommentToggle").addEventListener("click",()=>{const o=$("riceCommentToggl
 $("misoCommentToggle").addEventListener("click",()=>{const o=$("misoCommentToggle").getAttribute("aria-expanded")!=="true";setComment($("misoCommentToggle"),misoComment,o);if(o)misoComment.focus()});
 document.querySelectorAll(".dish-name-input,.dish-comment-input").forEach(e=>e.addEventListener("input",()=>{updateDishVisibility();updateSaveEnabled()}));
 document.querySelectorAll('.comment-toggle[data-index]').forEach(b=>b.addEventListener("click",()=>{const i=Number(b.dataset.index),o=b.getAttribute("aria-expanded")!=="true";setComment(b,$("dishComment"+i),o);if(o)$("dishComment"+i).focus()}));
+function commitMealRecord(r,wasEditing=false){
+ if(wasEditing){
+   const i=records.findIndex(x=>String(x.id)===String(editingId));
+   if(i<0){errorMsg.textContent="編集対象が見つかりません";return}
+   r.medicineStatus=records[i].medicineStatus;
+   records[i]=r;
+ }else records.push(r);
+ persist();finishEdit();pendingMealRecord=null;resetForm();renderList();updateSaveEnabled();showToast(wasEditing?"✔ 変更しました！":"✔ 記録しました！");
+}
 saveBtn.addEventListener("click",()=>{
  errorMsg.textContent="";
  if(!hasMealInput()||!dateInput.value||!selectedPeriod){updateSaveEnabled();return}
  const dishes=Array.from({length:5},(_,i)=>$("dish"+i).value.trim()),comments=Array.from({length:5},(_,i)=>$("dishComment"+i).value.trim());
  for(let i=0;i<5;i++)if(comments[i]&&!dishes[i]){errorMsg.textContent=`おかず${i+1}の料理名を入力してください`;return}
  const wasEditing=editingId!==null;
- if(!wasEditing&&shouldAskMedicine(selectedPeriod)&&tempMedicineStatus==="none"){openMedicineModal(null);return}
- const r={id:editingId??createId(),date:dateInput.value,period:selectedPeriod,rice:riceSelect.value,riceComment:riceComment.value.trim(),drink:drinkSelect.value,misoComment:misoComment.value.trim(),dishes,dishComments:comments,medicineStatus:wasEditing?"none":tempMedicineStatus};
- if(wasEditing){
-   const i=records.findIndex(x=>String(x.id)===String(editingId));
-   if(i<0){errorMsg.textContent="編集対象が見つかりません";return}
-   r.medicineStatus=records[i].medicineStatus;
-   records[i]=r;
- }else{
-   if(!shouldAskMedicine(r.period))r.medicineStatus="none";
-   records.push(r);
- }
- persist();finishEdit();resetForm();renderList();updateSaveEnabled();showToast(wasEditing?"✔ 変更しました！":"✔ 記録しました！");
+ const r={id:editingId??createId(),date:dateInput.value,period:selectedPeriod,rice:riceSelect.value,riceComment:riceComment.value.trim(),drink:drinkSelect.value,misoComment:misoComment.value.trim(),dishes,dishComments:comments,medicineStatus:"none"};
+ if(wasEditing){commitMealRecord(r,true);return}
+ if(shouldAskMedicine(r.period)){pendingMealRecord=r;openMedicineModal(null);return}
+ commitMealRecord(r,false);
 });
-$("medicineTakenBtn").addEventListener("click",()=>{tempMedicineStatus="taken";$("medicineTakenBtn").classList.add("selected");setTimeout(()=>{closeMedicineModal();updateSaveEnabled()},220)});
-$("medicinePendingBtn").addEventListener("click",()=>{tempMedicineStatus="pending";$("medicinePendingBtn").classList.add("selected");setTimeout(()=>{closeMedicineModal();updateSaveEnabled()},220)});
+$("medicineTakenBtn").addEventListener("click",()=>{if(!pendingMealRecord)return;pendingMealRecord.medicineStatus="taken";$("medicineTakenBtn").classList.add("selected");setTimeout(()=>{const r=pendingMealRecord;closeMedicineModal();commitMealRecord(r,false)},220)});
+$("medicinePendingBtn").addEventListener("click",()=>{if(!pendingMealRecord)return;pendingMealRecord.medicineStatus="pending";$("medicinePendingBtn").classList.add("selected");setTimeout(()=>{const r=pendingMealRecord;closeMedicineModal();commitMealRecord(r,false)},220)});
 $("pendingMedicineList").addEventListener("click",e=>{const b=e.target.closest("button[data-med-result]");if(!b)return;const row=b.closest(".pending-row"),id=row.dataset.id;setMedicineStatus(id,b.dataset.medResult);b.classList.add("selected");setTimeout(()=>{row.remove();closePendingIfEmpty()},220)});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&$("medicineModal").classList.contains("hidden"))showPendingMedicineIfNeeded()});
 window.addEventListener("pageshow",()=>{if($("medicineModal").classList.contains("hidden"))showPendingMedicineIfNeeded()});
