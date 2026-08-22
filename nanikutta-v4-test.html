@@ -191,7 +191,13 @@ function commitMealRecord(r,wasEditing=false){
    r.medicineStatus=records[i].medicineStatus;
    records[i]=r;
  }else records.push(r);
- persist();finishEdit();pendingMealRecord=null;resetForm();renderList();updateSaveEnabled();showToast(wasEditing?"✔ 変更しました！":"✔ 記録しました！");
+ persist();
+ finishEdit();
+ pendingMealRecord=null;
+ resetForm();
+ renderList();
+ updateSaveEnabled();
+ showToast(wasEditing?"✔ 変更しました！":"✔ 記録しました！");
 }
 saveBtn.addEventListener("click",()=>{
  errorMsg.textContent="";
