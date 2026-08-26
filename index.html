@@ -148,11 +148,11 @@ input[type=date],.item-input,.select-input{width:100%;max-width:100%;min-width:0
 <div class="dish-entry hidden" data-index="4"><div class="dish-main-row"><input class="item-input dish-name-input" id="dish4" placeholder="おかず5"><button type="button" class="comment-toggle" data-index="4" aria-expanded="false">ひとこと</button></div><input class="item-input dish-comment-input hidden" id="dishComment4" placeholder="この料理へのひとこと"></div>
 </div>
 </div>
-<div class="error-msg" id="errorMsg"></div>
 <button type="button" class="cancel-edit-link hidden" id="cancelEditBtn">編集をやめる</button>
 </section>
 <button type="button" class="save-btn disabled-look" id="saveBtn" disabled>✔ 記録する</button>
 <div class="records-separator" aria-hidden="true"></div>
+<div class="error-msg" id="errorMsg"></div>
 <button type="button" class="records-toggle" id="recordsToggleBtn" aria-expanded="false">📖 食べた履歴を確認する</button>
 <div class="records-area hidden" id="recordsArea">
 <h2>これまでの記録一覧</h2>
@@ -228,7 +228,7 @@ function hasMealInput(){
  return false
 }
 function ensureDateValue(){if(!dateInput.value)dateInput.value=todayStr();syncDateDisplay()}
-function updateSaveEnabled(){ensureDateValue();const enabled=hasMealInput()&&!!selectedPeriod;saveBtn.disabled=!enabled;saveBtn.classList.toggle("disabled-look",!enabled)}
+function updateSaveEnabled(){ensureDateValue();const hasInput=hasMealInput();saveBtn.disabled=!hasInput;saveBtn.classList.toggle("disabled-look",!hasInput);if(selectedPeriod&&errorMsg.textContent==="いつのご飯ですか？")errorMsg.textContent=""}
 
 function startEdit(r){editingId=r.id;dateInput.value=r.date;syncDateDisplay();selectedPeriod=r.period;document.querySelectorAll(".period-btn").forEach(b=>b.classList.toggle("active",b.dataset.period===r.period));riceSelect.value=r.rice;riceComment.value=r.riceComment;setComment($("riceCommentToggle"),riceComment,!!r.riceComment);drinkSelect.value=["なし","みそ汁","コーヒー","お茶"].includes(r.drink)?r.drink:"なし";misoComment.value=r.misoComment;setComment($("misoCommentToggle"),misoComment,!!r.misoComment);for(let i=0;i<5;i++){$("dish"+i).value=r.dishes[i]||"";$("dishComment"+i).value=r.dishComments[i]||"";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),!!r.dishComments[i])}updateDishVisibility();updateRiceNote();saveBtn.textContent="✔ 変更を保存";updateSaveEnabled();$("cancelEditBtn").classList.remove("hidden");$("inputCard").scrollIntoView({behavior:"smooth",block:"start"})}
 function finishEdit(){editingId=null;saveBtn.textContent="✔ 記録する";$("cancelEditBtn").classList.add("hidden")}
@@ -239,7 +239,7 @@ function setMedicineStatus(id,status){const r=records.find(x=>String(x.id)===Str
 function showPendingMedicineIfNeeded(){const p=records.filter(r=>r.medicineStatus==="pending").sort((a,b)=>a.date.localeCompare(b.date)||ORDER[a.period]-ORDER[b.period]);if(!p.length)return;$("pendingMedicineList").innerHTML=p.map(r=>`<div class="pending-row" data-id="${esc(r.id)}"><div class="pending-date">${formatDateShort(r.date)} ${r.period}食後</div><div class="pending-actions"><button data-med-result="taken">飲んだ</button><button data-med-result="missed">忘れてた</button></div></div>`).join("");$("pendingMedicineModal").classList.remove("hidden")}
 function closePendingIfEmpty(){if(!$("pendingMedicineList").querySelector(".pending-row"))$("pendingMedicineModal").classList.add("hidden")}
 document.querySelectorAll(".med-choice").forEach(b=>b.addEventListener("click",()=>{medSettings[b.dataset.medPeriod]=b.dataset.value==="yes";saveMedSettings()}));
-document.querySelectorAll(".period-btn").forEach(b=>b.addEventListener("click",()=>{selectedPeriod=b.dataset.period;document.querySelectorAll(".period-btn").forEach(x=>x.classList.toggle("active",x===b));updateSaveEnabled()}));
+document.querySelectorAll(".period-btn").forEach(b=>b.addEventListener("click",()=>{selectedPeriod=b.dataset.period;document.querySelectorAll(".period-btn").forEach(x=>x.classList.toggle("active",x===b));if(errorMsg.textContent==="いつのご飯ですか？")errorMsg.textContent="";updateSaveEnabled()}));
 $("recordsToggleBtn").addEventListener("click",()=>{
  const area=$("recordsArea"),opening=area.classList.contains("hidden");
  area.classList.toggle("hidden",!opening);
@@ -275,7 +275,8 @@ function commitMealRecord(r,wasEditing=false){
 saveBtn.addEventListener("click",()=>{
  errorMsg.textContent="";
  ensureDateValue();
- if(!hasMealInput()||!selectedPeriod){updateSaveEnabled();return}
+ if(!hasMealInput()){updateSaveEnabled();return}
+ if(!selectedPeriod){errorMsg.textContent="いつのご飯ですか？";updateSaveEnabled();return}
  const dishes=Array.from({length:5},(_,i)=>$("dish"+i).value.trim()),comments=Array.from({length:5},(_,i)=>$("dishComment"+i).value.trim());
  for(let i=0;i<5;i++)if(comments[i]&&!dishes[i]){errorMsg.textContent=`おかず${i+1}の料理名を入力してください`;return}
  const wasEditing=editingId!==null;
