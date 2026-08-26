@@ -221,8 +221,14 @@ function setComment(btn,input,open){btn.classList.toggle("active",open);btn.setA
 function updateDishVisibility(){let highest=-1;for(let i=0;i<5;i++)if($("dish"+i).value.trim()||$("dishComment"+i).value.trim())highest=i;const through=highest<0?0:Math.min(4,highest+1);for(let i=0;i<5;i++)document.querySelector(`.dish-entry[data-index="${i}"]`).classList.toggle("hidden",i>through)}
 function resetForm(){dateInput.value=todayStr();syncDateDisplay();selectedPeriod=null;tempMedicineStatus="none";document.querySelectorAll(".period-btn").forEach(b=>b.classList.remove("active"));riceSelect.value="なし";riceComment.value="";setComment($("riceCommentToggle"),riceComment,false);drinkSelect.value="なし";misoComment.value="";setComment($("misoCommentToggle"),misoComment,false);for(let i=0;i<5;i++){$("dish"+i).value="";$("dishComment"+i).value="";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),false)}updateDishVisibility();updateRiceNote();updateSaveEnabled()}
 function updateRiceNote(){$("riceExcludedNote").classList.toggle("hidden",!["なし","白ごはん"].includes(riceSelect.value))}
-function hasMealInput(){if(riceSelect.value!=="なし"||drinkSelect.value!=="なし")return true;for(let i=0;i<5;i++)if($("dish"+i).value.trim())return true;return false}
-function updateSaveEnabled(){const enabled=hasMealInput()&&!!dateInput.value&&!!selectedPeriod;saveBtn.disabled=!enabled;saveBtn.classList.toggle("disabled-look",!enabled)}
+function hasMealInput(){
+ if(riceSelect.value!=="なし"||drinkSelect.value!=="なし")return true;
+ if(riceComment.value.trim()||misoComment.value.trim())return true;
+ for(let i=0;i<5;i++)if($("dish"+i).value.trim())return true;
+ return false
+}
+function ensureDateValue(){if(!dateInput.value)dateInput.value=todayStr();syncDateDisplay()}
+function updateSaveEnabled(){ensureDateValue();const enabled=hasMealInput()&&!!selectedPeriod;saveBtn.disabled=!enabled;saveBtn.classList.toggle("disabled-look",!enabled)}
 
 function startEdit(r){editingId=r.id;dateInput.value=r.date;syncDateDisplay();selectedPeriod=r.period;document.querySelectorAll(".period-btn").forEach(b=>b.classList.toggle("active",b.dataset.period===r.period));riceSelect.value=r.rice;riceComment.value=r.riceComment;setComment($("riceCommentToggle"),riceComment,!!r.riceComment);drinkSelect.value=["なし","みそ汁","コーヒー","お茶"].includes(r.drink)?r.drink:"なし";misoComment.value=r.misoComment;setComment($("misoCommentToggle"),misoComment,!!r.misoComment);for(let i=0;i<5;i++){$("dish"+i).value=r.dishes[i]||"";$("dishComment"+i).value=r.dishComments[i]||"";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),!!r.dishComments[i])}updateDishVisibility();updateRiceNote();saveBtn.textContent="✔ 変更を保存";updateSaveEnabled();$("cancelEditBtn").classList.remove("hidden");$("inputCard").scrollIntoView({behavior:"smooth",block:"start"})}
 function finishEdit(){editingId=null;saveBtn.textContent="✔ 記録する";$("cancelEditBtn").classList.add("hidden")}
@@ -242,8 +248,10 @@ $("recordsToggleBtn").addEventListener("click",()=>{
  if(opening){renderList();area.scrollIntoView({behavior:"smooth",block:"start"})}
 });
 document.querySelectorAll(".filter-btn").forEach(b=>b.addEventListener("click",()=>{const p=b.dataset.period;activeFilterPeriods.has(p)?activeFilterPeriods.delete(p):activeFilterPeriods.add(p);b.classList.toggle("active",activeFilterPeriods.has(p));showAll=false;renderList()}));
-riceSelect.addEventListener("change",()=>{updateRiceNote();updateSaveEnabled()});
-drinkSelect.addEventListener("change",updateSaveEnabled);
+["change","input"].forEach(ev=>riceSelect.addEventListener(ev,()=>{updateRiceNote();updateSaveEnabled()}));
+["change","input"].forEach(ev=>drinkSelect.addEventListener(ev,updateSaveEnabled));
+riceComment.addEventListener("input",updateSaveEnabled);
+misoComment.addEventListener("input",updateSaveEnabled);
 dateInput.addEventListener("change",()=>{syncDateDisplay();updateSaveEnabled()});
 $("riceCommentToggle").addEventListener("click",()=>{const o=$("riceCommentToggle").getAttribute("aria-expanded")!=="true";setComment($("riceCommentToggle"),riceComment,o);if(o)riceComment.focus()});
 $("misoCommentToggle").addEventListener("click",()=>{const o=$("misoCommentToggle").getAttribute("aria-expanded")!=="true";setComment($("misoCommentToggle"),misoComment,o);if(o)misoComment.focus()});
@@ -266,7 +274,8 @@ function commitMealRecord(r,wasEditing=false){
 }
 saveBtn.addEventListener("click",()=>{
  errorMsg.textContent="";
- if(!hasMealInput()||!dateInput.value||!selectedPeriod){updateSaveEnabled();return}
+ ensureDateValue();
+ if(!hasMealInput()||!selectedPeriod){updateSaveEnabled();return}
  const dishes=Array.from({length:5},(_,i)=>$("dish"+i).value.trim()),comments=Array.from({length:5},(_,i)=>$("dishComment"+i).value.trim());
  for(let i=0;i<5;i++)if(comments[i]&&!dishes[i]){errorMsg.textContent=`おかず${i+1}の料理名を入力してください`;return}
  const wasEditing=editingId!==null;
