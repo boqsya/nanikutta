@@ -228,7 +228,7 @@ function hasMealInput(){
  return false
 }
 function ensureDateValue(){if(!dateInput.value)dateInput.value=todayStr();syncDateDisplay()}
-function updateSaveEnabled(){ensureDateValue();const hasInput=hasMealInput();saveBtn.disabled=!hasInput;saveBtn.classList.toggle("disabled-look",!hasInput);if(selectedPeriod&&errorMsg.textContent==="いつのご飯ですか？")errorMsg.textContent=""}
+function updateSaveEnabled(){ensureDateValue();const hasInput=hasMealInput();const enabled=hasInput&&!!selectedPeriod;saveBtn.disabled=!enabled;saveBtn.classList.toggle("disabled-look",!enabled);if(hasInput&&!selectedPeriod){errorMsg.textContent="いつのご飯ですか？"}else if(errorMsg.textContent==="いつのご飯ですか？"){errorMsg.textContent=""}}
 
 function startEdit(r){editingId=r.id;dateInput.value=r.date;syncDateDisplay();selectedPeriod=r.period;document.querySelectorAll(".period-btn").forEach(b=>b.classList.toggle("active",b.dataset.period===r.period));riceSelect.value=r.rice;riceComment.value=r.riceComment;setComment($("riceCommentToggle"),riceComment,!!r.riceComment);drinkSelect.value=["なし","みそ汁","コーヒー","お茶"].includes(r.drink)?r.drink:"なし";misoComment.value=r.misoComment;setComment($("misoCommentToggle"),misoComment,!!r.misoComment);for(let i=0;i<5;i++){$("dish"+i).value=r.dishes[i]||"";$("dishComment"+i).value=r.dishComments[i]||"";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),!!r.dishComments[i])}updateDishVisibility();updateRiceNote();saveBtn.textContent="✔ 変更を保存";updateSaveEnabled();$("cancelEditBtn").classList.remove("hidden");$("inputCard").scrollIntoView({behavior:"smooth",block:"start"})}
 function finishEdit(){editingId=null;saveBtn.textContent="✔ 記録する";$("cancelEditBtn").classList.add("hidden")}
