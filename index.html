@@ -23,16 +23,40 @@
 .records-separator{height:4px;background:#D8E5DF;border-radius:999px;margin:22px 4px 10px}
 .records-area{margin-top:4px}h2{font-size:23px;margin:28px 0 10px;border-left:7px solid var(--primary);padding-left:10px}label{display:block;font-size:19px;font-weight:700;margin:16px 0 7px}input,select,button{font:inherit}
 input[type=date],.item-input,.select-input{width:100%;max-width:100%;min-width:0;min-height:58px;font-size:21px;border:2px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--ink)}
-.date-wrap{display:block;width:100%;min-width:0;overflow:hidden}
+.date-wrap{
+  position:relative;
+  width:100%;
+  min-width:0;
+  min-height:58px;
+  border:2px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  overflow:hidden;
+}
+.date-display{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
+  color:var(--ink);
+  pointer-events:none;
+  z-index:1;
+}
 .date-wrap input[type=date]{
-  display:block;
+  position:absolute;
+  inset:0;
   width:100%!important;
+  height:100%!important;
   min-width:0!important;
   max-width:100%!important;
-  box-sizing:border-box!important;
   margin:0!important;
-  -webkit-appearance:auto;
-  appearance:auto;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  opacity:0;
+  z-index:2;
 }
 .period-row,.filter-row{display:flex;gap:7px}.period-btn,.filter-btn{flex:1;min-height:58px;border-radius:13px;border:2px solid var(--line);background:#fff;font-size:20px;font-weight:700;color:var(--ink-soft)}.period-btn.active,.filter-btn.active{color:#fff}.period-btn[data-period="朝"].active,.filter-btn[data-period="朝"].active{background:#C8951A;border-color:#C8951A}.period-btn[data-period="昼"].active,.filter-btn[data-period="昼"].active{background:#3F7FAE;border-color:#3F7FAE}.period-btn[data-period="晩"].active,.filter-btn[data-period="晩"].active{background:#705889;border-color:#705889}.period-btn[data-period="弁当"].active,.filter-btn[data-period="弁当"].active{background:#4C7C52;border-color:#4C7C52}
 .medicine-box{margin:0 0 14px}.medicine-box summary{list-style:none;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:18px;font-weight:700}.medicine-box summary::-webkit-details-marker{display:none}.medicine-state{color:var(--primary-dark)}.medicine-grid{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;padding:8px 12px 12px}.med-row{display:grid;grid-template-columns:90px 1fr 1fr;gap:7px;align-items:center;margin-top:8px}.med-label{font-size:18px;font-weight:700}.med-choice{min-height:46px;border:2px solid var(--line);border-radius:11px;background:#fff;font-size:18px;font-weight:700}.med-choice.active{background:var(--primary);border-color:var(--primary);color:#fff}
@@ -62,7 +86,10 @@ input[type=date],.item-input,.select-input{width:100%;max-width:100%;min-width:0
 
 <div class="storage-warn hidden" id="storageWarn">⚠ この環境では記録を保存できません</div>
 <section class="card" id="inputCard">
-<label for="dateInput">日付</label><div class="date-wrap"><input type="date" id="dateInput"></div>
+<label for="dateInput">日付</label><div class="date-wrap"><span id="dateDisplay" class="date-display">2026/08/26</span><input type="date" id="dateInput" aria-label="日付" value="2026-08-26"></div>
+<script>
+(()=>{const d=new Date(),v=[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");const i=document.getElementById("dateInput"),s=document.getElementById("dateDisplay");if(i)i.value=v;if(s)s.textContent=v.replaceAll("-","/");})();
+</script>
 <label>時間帯</label>
 <div class="period-row">
 <button type="button" class="period-btn" data-period="朝">朝</button><button type="button" class="period-btn" data-period="昼">昼</button><button type="button" class="period-btn" data-period="晩">晩</button><button type="button" class="period-btn" data-period="弁当">弁当</button>
@@ -159,6 +186,7 @@ let pendingMealRecord=null;
 const $=id=>document.getElementById(id);
 const dateInput=$("dateInput"),recordListEl=$("recordList"),errorMsg=$("errorMsg"),saveBtn=$("saveBtn"),riceSelect=$("riceSelect"),drinkSelect=$("drinkSelect"),riceComment=$("riceComment"),misoComment=$("misoComment");
 function todayStr(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
+function syncDateDisplay(){const v=dateInput.value||todayStr();$("dateDisplay").textContent=v.replaceAll("-","/")}
 function parseDate(s){const [y,m,d]=String(s).split("-").map(Number);return new Date(y,m-1,d)}
 function formatDateShort(s){const d=parseDate(s),reiwa=d.getFullYear()-2018;return `R${reiwa}/${d.getMonth()+1}/${d.getDate()}`}
 function esc(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -191,12 +219,12 @@ function renderHistory(){const list=historyOccurrences(historyDish);$("historyTi
 function renderList(){historyDish?renderHistory():renderNormal()}
 function setComment(btn,input,open){btn.classList.toggle("active",open);btn.setAttribute("aria-expanded",String(open));input.classList.toggle("hidden",!open)}
 function updateDishVisibility(){let highest=-1;for(let i=0;i<5;i++)if($("dish"+i).value.trim()||$("dishComment"+i).value.trim())highest=i;const through=highest<0?0:Math.min(4,highest+1);for(let i=0;i<5;i++)document.querySelector(`.dish-entry[data-index="${i}"]`).classList.toggle("hidden",i>through)}
-function resetForm(){dateInput.value=todayStr();selectedPeriod=null;tempMedicineStatus="none";document.querySelectorAll(".period-btn").forEach(b=>b.classList.remove("active"));riceSelect.value="なし";riceComment.value="";setComment($("riceCommentToggle"),riceComment,false);drinkSelect.value="なし";misoComment.value="";setComment($("misoCommentToggle"),misoComment,false);for(let i=0;i<5;i++){$("dish"+i).value="";$("dishComment"+i).value="";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),false)}updateDishVisibility();updateRiceNote();updateSaveEnabled()}
+function resetForm(){dateInput.value=todayStr();syncDateDisplay();selectedPeriod=null;tempMedicineStatus="none";document.querySelectorAll(".period-btn").forEach(b=>b.classList.remove("active"));riceSelect.value="なし";riceComment.value="";setComment($("riceCommentToggle"),riceComment,false);drinkSelect.value="なし";misoComment.value="";setComment($("misoCommentToggle"),misoComment,false);for(let i=0;i<5;i++){$("dish"+i).value="";$("dishComment"+i).value="";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),false)}updateDishVisibility();updateRiceNote();updateSaveEnabled()}
 function updateRiceNote(){$("riceExcludedNote").classList.toggle("hidden",!["なし","白ごはん"].includes(riceSelect.value))}
 function hasMealInput(){if(riceSelect.value!=="なし"||drinkSelect.value!=="なし")return true;for(let i=0;i<5;i++)if($("dish"+i).value.trim())return true;return false}
 function updateSaveEnabled(){const enabled=hasMealInput()&&!!dateInput.value&&!!selectedPeriod;saveBtn.disabled=!enabled;saveBtn.classList.toggle("disabled-look",!enabled)}
 
-function startEdit(r){editingId=r.id;dateInput.value=r.date;selectedPeriod=r.period;document.querySelectorAll(".period-btn").forEach(b=>b.classList.toggle("active",b.dataset.period===r.period));riceSelect.value=r.rice;riceComment.value=r.riceComment;setComment($("riceCommentToggle"),riceComment,!!r.riceComment);drinkSelect.value=["なし","みそ汁","コーヒー","お茶"].includes(r.drink)?r.drink:"なし";misoComment.value=r.misoComment;setComment($("misoCommentToggle"),misoComment,!!r.misoComment);for(let i=0;i<5;i++){$("dish"+i).value=r.dishes[i]||"";$("dishComment"+i).value=r.dishComments[i]||"";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),!!r.dishComments[i])}updateDishVisibility();updateRiceNote();saveBtn.textContent="✔ 変更を保存";updateSaveEnabled();$("cancelEditBtn").classList.remove("hidden");$("inputCard").scrollIntoView({behavior:"smooth",block:"start"})}
+function startEdit(r){editingId=r.id;dateInput.value=r.date;syncDateDisplay();selectedPeriod=r.period;document.querySelectorAll(".period-btn").forEach(b=>b.classList.toggle("active",b.dataset.period===r.period));riceSelect.value=r.rice;riceComment.value=r.riceComment;setComment($("riceCommentToggle"),riceComment,!!r.riceComment);drinkSelect.value=["なし","みそ汁","コーヒー","お茶"].includes(r.drink)?r.drink:"なし";misoComment.value=r.misoComment;setComment($("misoCommentToggle"),misoComment,!!r.misoComment);for(let i=0;i<5;i++){$("dish"+i).value=r.dishes[i]||"";$("dishComment"+i).value=r.dishComments[i]||"";setComment(document.querySelector(`.comment-toggle[data-index="${i}"]`),$("dishComment"+i),!!r.dishComments[i])}updateDishVisibility();updateRiceNote();saveBtn.textContent="✔ 変更を保存";updateSaveEnabled();$("cancelEditBtn").classList.remove("hidden");$("inputCard").scrollIntoView({behavior:"smooth",block:"start"})}
 function finishEdit(){editingId=null;saveBtn.textContent="✔ 記録する";$("cancelEditBtn").classList.add("hidden")}
 function shouldAskMedicine(period){return ["朝","昼","晩"].includes(period)&&medSettings[period]}
 function openMedicineModal(id){currentSavedId=id;$("medicineTakenBtn").classList.remove("selected");$("medicinePendingBtn").classList.remove("selected");$("medicineModal").classList.remove("hidden")}
@@ -216,7 +244,7 @@ $("recordsToggleBtn").addEventListener("click",()=>{
 document.querySelectorAll(".filter-btn").forEach(b=>b.addEventListener("click",()=>{const p=b.dataset.period;activeFilterPeriods.has(p)?activeFilterPeriods.delete(p):activeFilterPeriods.add(p);b.classList.toggle("active",activeFilterPeriods.has(p));showAll=false;renderList()}));
 riceSelect.addEventListener("change",()=>{updateRiceNote();updateSaveEnabled()});
 drinkSelect.addEventListener("change",updateSaveEnabled);
-dateInput.addEventListener("change",updateSaveEnabled);
+dateInput.addEventListener("change",()=>{syncDateDisplay();updateSaveEnabled()});
 $("riceCommentToggle").addEventListener("click",()=>{const o=$("riceCommentToggle").getAttribute("aria-expanded")!=="true";setComment($("riceCommentToggle"),riceComment,o);if(o)riceComment.focus()});
 $("misoCommentToggle").addEventListener("click",()=>{const o=$("misoCommentToggle").getAttribute("aria-expanded")!=="true";setComment($("misoCommentToggle"),misoComment,o);if(o)misoComment.focus()});
 document.querySelectorAll(".dish-name-input,.dish-comment-input").forEach(e=>e.addEventListener("input",()=>{updateDishVisibility();updateSaveEnabled()}));
@@ -261,7 +289,7 @@ $("clearAllBtn").addEventListener("click",()=>{pendingAction="clear";$("modalTex
 $("backupBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify({app:"なにっくった",version:4,records},null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`nanikutta-v4-backup-${todayStr()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)});
 $("restoreBtn").addEventListener("click",()=>{$("restoreFileInput").value="";$("restoreFileInput").click()});
 $("restoreFileInput").addEventListener("change",async()=>{const f=$("restoreFileInput").files?.[0];if(!f)return;try{const p=JSON.parse(await f.text());pendingRestoreRecords=validateRecords(Array.isArray(p)?p:p.records);pendingAction="restore";$("modalText").textContent="現在の記録をバックアップで置き換えますか？";$("deleteModal").classList.remove("hidden")}catch(e){errorMsg.textContent="バックアップを読み込めませんでした"}});
-dateInput.value=todayStr();loadMedSettings();load();updateRiceNote();updateDishVisibility();updateSaveEnabled();
+dateInput.value=todayStr();syncDateDisplay();loadMedSettings();load();updateRiceNote();updateDishVisibility();updateSaveEnabled();
 </script>
 </body>
 </html>
